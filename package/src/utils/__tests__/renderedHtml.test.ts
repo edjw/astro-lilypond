@@ -194,29 +194,21 @@ describe("renderedHtml", () => {
 			).toBe('<img data-lilypond-image src="/a.svg" alt>');
 		});
 
-		it("forwards loading onto a single-page <img>", () => {
-			expect(
-				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }], {
-					loading: "lazy",
-				}),
-			).toBe('<img data-lilypond-image src="/a.svg" alt loading="lazy">');
-		});
-
-		it("forwards decoding onto a single-page <img>", () => {
-			expect(
-				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }], {
-					decoding: "async",
-				}),
-			).toBe('<img data-lilypond-image src="/a.svg" alt decoding="async">');
-		});
-
-		it("forwards fetchpriority onto a single-page <img>", () => {
-			expect(
-				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }], {
-					fetchpriority: "high",
-				}),
-			).toBe('<img data-lilypond-image src="/a.svg" alt fetchpriority="high">');
-		});
+		it.each([
+			["loading", { loading: "lazy" }, 'loading="lazy"'],
+			["decoding", { decoding: "async" }, 'decoding="async"'],
+			["fetchpriority", { fetchpriority: "high" }, 'fetchpriority="high"'],
+		] as const)(
+			"forwards only %s onto a single-page <img>",
+			(_name, options, attr) => {
+				expect(
+					renderedHtml(
+						[{ src: "/a.svg", width: undefined, height: undefined }],
+						options,
+					),
+				).toBe(`<img data-lilypond-image src="/a.svg" alt ${attr}>`);
+			},
+		);
 
 		it("forwards all three onto a single-page <img> with class/style preserved", () => {
 			expect(
@@ -252,14 +244,6 @@ describe("renderedHtml", () => {
 					'<li><img data-lilypond-image src="/b.svg" width="100" height="60" alt="Sonata" loading="lazy" decoding="async" fetchpriority="low"></li>' +
 					"</ol>",
 			);
-		});
-
-		it("only adds the hints that are provided", () => {
-			expect(
-				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }], {
-					decoding: "async",
-				}),
-			).toBe('<img data-lilypond-image src="/a.svg" alt decoding="async">');
 		});
 	});
 });

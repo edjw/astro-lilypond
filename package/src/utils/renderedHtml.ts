@@ -41,9 +41,6 @@ export function renderedHtml(
 
 	const classAttr = addAttribute(className, "class");
 	const styleAttr = addAttribute(style, "style");
-
-	// Fetch/decode hints, forwarded onto every rendered <img> (single-page
-	// and each page in a multi-page <ol>).
 	const imageAttrs =
 		addAttribute(loading, "loading") +
 		addAttribute(decoding, "decoding") +

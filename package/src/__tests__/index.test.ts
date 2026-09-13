@@ -815,36 +815,21 @@ describe("getScore()", () => {
 		expect(html).toContain('style="width: 50%"');
 	});
 
-	it("forwards loading through Score onto the rendered <img>", async () => {
-		mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
-		const { Score } = await publicGetScore(SCORE);
-		const container = await AstroContainer.create();
-		const html = await container.renderToString(Score, {
-			props: { loading: "lazy" },
-		});
-		expect(html).toContain('loading="lazy"');
-		expect(html).toContain("data-lilypond-image");
-	});
-
-	it("forwards decoding through Score onto the rendered <img>", async () => {
-		mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
-		const { Score } = await publicGetScore(SCORE);
-		const container = await AstroContainer.create();
-		const html = await container.renderToString(Score, {
-			props: { decoding: "async" },
-		});
-		expect(html).toContain('decoding="async"');
-	});
-
-	it("forwards fetchpriority through Score onto the rendered <img>", async () => {
-		mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
-		const { Score } = await publicGetScore(SCORE);
-		const container = await AstroContainer.create();
-		const html = await container.renderToString(Score, {
-			props: { fetchpriority: "high" },
-		});
-		expect(html).toContain('fetchpriority="high"');
-	});
+	it.each([
+		["loading", { loading: "lazy" }, 'loading="lazy"'],
+		["decoding", { decoding: "async" }, 'decoding="async"'],
+		["fetchpriority", { fetchpriority: "high" }, 'fetchpriority="high"'],
+	] as const)(
+		"forwards %s through Score onto the rendered <img>",
+		async (_name, props, attr) => {
+			mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
+			const { Score } = await publicGetScore(SCORE);
+			const container = await AstroContainer.create();
+			const html = await container.renderToString(Score, { props });
+			expect(html).toContain(attr);
+			expect(html).toContain("data-lilypond-image");
+		},
+	);
 
 	it("forwards loading/decoding/fetchpriority onto every <img> in a multi-page group", async () => {
 		mockEmitLilypondAsset.mockResolvedValueOnce([
