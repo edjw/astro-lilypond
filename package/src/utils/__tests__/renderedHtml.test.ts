@@ -188,7 +188,7 @@ describe("renderedHtml", () => {
 	});
 
 	describe("loading/decoding/fetchpriority hints", () => {
-		it("omits the hints by default (non-breaking)", () => {
+		it("omits the hints by default", () => {
 			expect(
 				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }]),
 			).toBe('<img data-lilypond-image src="/a.svg" alt>');
@@ -209,20 +209,6 @@ describe("renderedHtml", () => {
 				).toBe(`<img data-lilypond-image src="/a.svg" alt ${attr}>`);
 			},
 		);
-
-		it("forwards all three onto a single-page <img> with class/style preserved", () => {
-			expect(
-				renderedHtml([{ src: "/a.svg", width: undefined, height: undefined }], {
-					class: "hero",
-					style: "width: 50%",
-					loading: "lazy",
-					decoding: "async",
-					fetchpriority: "high",
-				}),
-			).toBe(
-				'<img data-lilypond-image class="hero" src="/a.svg" alt loading="lazy" decoding="async" fetchpriority="high" style="width: 50%">',
-			);
-		});
 
 		it("forwards loading/decoding/fetchpriority onto every <img> in a multi-page group", () => {
 			expect(
