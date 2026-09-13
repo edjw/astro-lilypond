@@ -30,6 +30,7 @@ import {
 	lyTypeDeclarationsFor,
 	parseLyHeaderFields,
 	prependVersion,
+	type RenderedHtmlOptions,
 	renderedErrorHtml,
 	renderedHtml,
 	resolveDefaults,
@@ -104,50 +105,14 @@ export interface GetScoreResult {
 	raw: string;
 }
 
-interface ScoreImageProps {
-	pageLimit?: number;
-	class?: string;
-	style?: string;
-	/**
-	 * `loading` hint forwarded onto every rendered `<img>`. Set `"lazy"` so
-	 * off-screen scores in a list don't fetch until scrolled near, or `"eager"`
-	 * (with `fetchpriority="high"`) for an above-the-fold/LCP score.
-	 */
-	loading?: "lazy" | "eager";
-	/**
-	 * `decoding` hint forwarded onto every rendered `<img>`. `"async"` keeps
-	 * image decoding off the main thread.
-	 */
-	decoding?: "async" | "sync" | "auto";
-	/**
-	 * `fetchpriority` hint forwarded onto every rendered `<img>`. `"high"` for
-	 * an above-the-fold/LCP score, `"low"` to defer a below-the-fold score.
-	 */
-	fetchpriority?: "high" | "low" | "auto";
-	/**
-	 * Convenience for an above-the-fold/LCP score: sets `loading="eager"`,
-	 * `decoding="sync"`, `fetchpriority="high"` — the same defaults Astro's
-	 * `<Image>` derives from its `priority` prop. Any of `loading`/`decoding`/
-	 * `fetchpriority` you pass explicitly take precedence.
-	 */
-	priority?: boolean;
-	alt?: string;
-}
+type ScoreImageProps = RenderedHtmlOptions;
 
 function createScoreComponent(
 	content: LilypondImageResult,
 ): AstroComponentFactory {
 	return createComponent((_result, props: ScoreImageProps) => {
 		const alt = props.alt ?? content.alt ?? "";
-		const html = renderedHtml(content.pages, alt, {
-			class: props.class,
-			style: props.style,
-			pageLimit: props.pageLimit,
-			loading: props.loading,
-			decoding: props.decoding,
-			fetchpriority: props.fetchpriority,
-			priority: props.priority,
-		});
+		const html = renderedHtml(content.pages, { ...props, alt });
 		return renderTemplate`${unescapeHTML(html)}`;
 	});
 }

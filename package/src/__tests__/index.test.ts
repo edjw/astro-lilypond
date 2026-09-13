@@ -846,18 +846,6 @@ describe("getScore()", () => {
 		expect(html).toContain('fetchpriority="high"');
 	});
 
-	it("priority=true sets loading/decoding/fetchpriority for an above-the-fold score", async () => {
-		mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
-		const { Score } = await publicGetScore(SCORE);
-		const container = await AstroContainer.create();
-		const html = await container.renderToString(Score, {
-			props: { priority: true },
-		});
-		expect(html).toContain('loading="eager"');
-		expect(html).toContain('decoding="sync"');
-		expect(html).toContain('fetchpriority="high"');
-	});
-
 	it("forwards loading/decoding/fetchpriority onto every <img> in a multi-page group", async () => {
 		mockEmitLilypondAsset.mockResolvedValueOnce([
 			{ src: "/_astro/a.svg" },
@@ -1066,17 +1054,6 @@ describe("Score component", () => {
 		expect(html).toContain('decoding="async"');
 		expect(html).toContain('fetchpriority="high"');
 		expect(html).toContain("data-lilypond-image");
-	});
-
-	it("priority=true on <Score /> sets loading/decoding/fetchpriority for an above-the-fold score", async () => {
-		mockEmitLilypondAsset.mockResolvedValueOnce([{ src: "/_astro/a.svg" }]);
-		const container = await AstroContainer.create();
-		const html = await container.renderToString(PublicScore, {
-			props: { content: SCORE, priority: true },
-		});
-		expect(html).toContain('loading="eager"');
-		expect(html).toContain('decoding="sync"');
-		expect(html).toContain('fetchpriority="high"');
 	});
 
 	it("renders multiple pages as an <ol data-lilypond-group> of <li><img>s", async () => {

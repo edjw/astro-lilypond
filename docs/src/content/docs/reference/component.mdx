@@ -20,7 +20,6 @@ interface ScoreProps {
   loading?: "lazy" | "eager";
   decoding?: "async" | "sync" | "auto";
   fetchpriority?: "high" | "low" | "auto";
-  priority?: boolean;
   alt?: string;
 }
 ```
@@ -79,7 +78,7 @@ Inline styles applied directly to the rendered element.
 
 **Type:** `"lazy" | "eager"`
 
-`loading` hint forwarded onto every rendered `<img>` (each page in a multi-page group included). Set `loading="lazy"` so off-screen scores in a list don't fetch until scrolled near; for an above-the-fold or LCP score, use `loading="eager"` with [`fetchpriority="high"`](#fetchpriority), or just [`priority`](#priority).
+`loading` hint forwarded onto every rendered `<img>`. For more info, see [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/loading).
 
 ```astro title="LazyGallery.astro"
 <Score content={sonata} loading="lazy" decoding="async" />
@@ -89,13 +88,13 @@ Inline styles applied directly to the rendered element.
 
 **Type:** `"async" | "sync" | "auto"`
 
-`decoding` hint forwarded onto every rendered `<img>`. `decoding="async"` keeps image decoding off the main thread.
+`decoding` hint forwarded onto every rendered `<img>`. For more info, see [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding).
 
 ### `fetchpriority`
 
 **Type:** `"high" | "low" | "auto"`
 
-`fetchpriority` hint forwarded onto every rendered `<img>`. Set `fetchpriority="high"` for an above-the-fold or LCP score so the browser fetches it on the critical path; `"low"` deprioritises a below-the-fold score behind more urgent work. With `loading="lazy"` the fetch is already deferred, so `fetchpriority` matters most for an eager LCP score.
+`fetchpriority` hint forwarded onto every rendered `<img>`. For more info, see [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority).
 
 ```astro title="LcpScore.astro"
 <Score
@@ -104,16 +103,6 @@ Inline styles applied directly to the rendered element.
   decoding="async"
   fetchpriority="high"
 />
-```
-
-### `priority`
-
-**Type:** `boolean`
-
-A convenience for an above-the-fold or LCP score. When `true`, sets `loading="eager"`, `decoding="sync"`, and `fetchpriority="high"` — the same defaults Astro's `<Image>` derives from its own `priority` prop. Any of [`loading`](#loading)/[`decoding`](#decoding)/[`fetchpriority`](#fetchpriority) you pass explicitly take precedence over these.
-
-```astro title="HeroScore.astro"
-<Score content={heroSonata} priority />
 ```
 
 ### `alt`
